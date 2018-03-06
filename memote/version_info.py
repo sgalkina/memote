@@ -45,7 +45,11 @@ PKG_ORDER = [
     "github",
     "travispy",
     "travis",
+<<<<<<< HEAD
     "numpydoc"
+=======
+    "goodtables"
+>>>>>>> feat: merge important files from essentiality PR
 ]
 
 

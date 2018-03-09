@@ -38,10 +38,10 @@ import memote.support.experimental.essentiality as genome
 # else:#
 #     CONFIG = None
 
-EXPERIMENT_PATHS = []
+ESSENTIALITY_DATA = pytest.memote.essentiality_paths
 
 
-@pytest.fixture(params=EXPERIMENT_PATHS)
+@pytest.fixture(scope="module", params=ESSENTIALITY_DATA)
 def comparative_dataframe(request, read_only_model):
     """Provide single dataframe with experimental and predicted results."""
     if hasattr(request, "param"):

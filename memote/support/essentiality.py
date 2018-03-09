@@ -25,12 +25,14 @@ from warnings import warn
 import pandas as pd
 import numpy as np
 from cobra.flux_analysis import single_gene_deletion
+from optlang.interface import OPTIMAL
 
 __all__ = ()
 
 LOGGER = logging.getLogger(__name__)
 
 
+# TODO: Move this to configuration.
 def configure_model(model, config):
     """
     Return a model which is set up according a specific condition.
@@ -44,9 +46,10 @@ def configure_model(model, config):
     if isinstance(objective, dict):
         model.objective = objective
     else:
-        model.objective = {model.reactions.get_by_id(objective): 1}
+        model.objective = model.reactions.get_by_id(objective)
 
 
+# Should we allow for multiprocessing here?
 def in_silico_essentiality(model, data):
     """
     Perform an in silico gene knockout study on a given model.
@@ -54,11 +57,11 @@ def in_silico_essentiality(model, data):
     Based on experimental data provided by the user. Returns a series with
     identical shape.
     """
-    genes = [g for g in data['Gene ID'] if g in model.genes]
+    genes = [g for g in data['gene'] if g in model.genes]
     results = single_gene_deletion(model, gene_list=genes, method='fba')
     warn("The following genes are not in the model and were ignored: {}."
-         "".format(", ".join(set(data['Gene ID']) - set(genes))))
-    return pd.concat([data[data['Gene ID'].isin(genes)], results], axis=1,
+         "".format(", ".join(set(data['gene']) - set(genes))))
+    return pd.concat([data[data['gene'].isin(genes)], results], axis=1,
                      copy=False)
 
 
@@ -92,3 +95,16 @@ def prepare_qualitative_comparison(dataframe):
         False
     )
     return dataframe, exp
+
+
+def add_essentiality(dataframe, threshold=1E-02):
+    """
+    Convert growth rates to essentiality.
+
+    It might be debatable whether non-optimal solutions should be considered
+    essential. It's probably true for infeasible solutions but it might be in
+    the realm of inconclusive for other types of statuses.
+
+    """
+    dataframe["essentiality"] = (dataframe["growth"] < threshold) | \
+        (dataframe["status"] != OPTIMAL)

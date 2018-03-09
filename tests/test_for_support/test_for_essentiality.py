@@ -37,25 +37,19 @@ MOCK_CONFIG = {
 }
 
 
-@pytest.fixture(scope='function')
-def input_df():
+@pytest.fixture(scope='module')
+def genes():
     """Provides gene essentiality adapted from the Keio collection."""
-    return pd.DataFrame({
-#        'Growth Rate': [0.0, 0.0, 0.183, 0.0],
-#        'Gene ID': ['b0025', 'b0417', 'b0418', 'b0893']
-        'Growth Rate': [0.0, 0.0, 0.183],
-        'Gene ID': ['b0025', 'b0417', 'b0418']
-    })
+    return ["b2935", "b0723", "b0451"]
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def expected_df():
-    """Provides expected results generated using the default iJR904."""
-    return pd.Series({
-#        'Growth Rate': [0.0, 0.922, 0.922, 0],
-#        'Gene ID': ['b0025', 'b0417', 'b0418', 'b0893']
-        'Growth Rate': [0.0, 0.922, 0.922],
-        'Gene ID': ['b0025', 'b0417', 'b0418']
+    """Provides expected results generated using the E. coli core model."""
+    return pd.DataFrame({
+        "growth": [0.873922, 0.814298, 0.0],
+        "gene": ["b2935", "b0723", "b0451"],
+        "status": ["optimal", "optimal", "optimal"]
     })
 
 
@@ -98,9 +92,10 @@ def test_prepare_model_medium_objective(raw_model, expected_model, config):
     assert raw_id == expected_id
 
 
-def test_in_silico_essentiality(input_df, expected_df, iJR904):
+@pytest.mark.parametrize("model", ["textbook"], indirect=["model"])
+def test_in_silico_essentiality(input_df, expected_df, model):
     """Expect the in silico result series to match the provided series."""
-    in_silico = essential.in_silico_essentiality(iJR904, input_df)
+    in_silico = essential.in_silico_essentiality(model, input_df)
     assert in_silico[:2].equals(expected_df)
 
 

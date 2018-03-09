@@ -3,7 +3,7 @@
         {
             "name": "gene",
             "title": "Gene Identifier",
-            "description": "The gene identifier must correspond with the metabolic model identifiers.",
+            "description": "The gene identifier must correspond to the metabolic model identifiers.",
             "type": "string",
             "constraints": {
                 "required": true

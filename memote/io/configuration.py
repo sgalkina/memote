@@ -77,7 +77,7 @@ def extensions_part(path):
 class ExperimentConfiguration(object):
     """Represent an experimental configuration."""
 
-    experiment_types = frozenset(["essentiality", "growth", "production"])
+    experiment_types = frozenset(["essentiality", "growth"])
     data_formats = frozenset(["csv", "tsv", "xls", "xlsx", "ods"])
 
     def __init__(self, filename):

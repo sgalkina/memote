@@ -23,6 +23,7 @@ import json
 from io import open
 from glob import glob
 from os.path import dirname, join, basename
+from builtins import open
 
 import ruamel.yaml as yaml
 import jsonschema
@@ -91,16 +92,20 @@ class ExperimentConfiguration(object):
 
         """
         self.type = name_part(filename)
-        assert self.type in self.experiment_types
+        assert self.type in self.experiment_types, \
+            "Currently allowed experimental data types are: {} and not "\
+            "'{}' as determined by filename.".format(
+                ", ".join(self.experiment_types), self.type)
         with open(filename) as file_h:
             self.content = yaml.safe_load(file_h)
+        self.base = dirname(filename)
         self.media = list()
-        self.media_files = glob(join(dirname(filename), "media", "*"))
+        self.media_files = glob(join(self.base, "media", "*"))
         self.media_files = frozenset(filter(
             lambda f: self.data_formats.issuperset(extensions_part(f)),
             self.media_files))
         self.data = list()
-        self.data_files = glob(join(dirname(filename), self.type, "*"))
+        self.data_files = glob(join(self.base, self.type, "*"))
         self.data_files = frozenset(filter(
             lambda f: self.data_formats.issuperset(extensions_part(f)),
             self.data_files))
@@ -141,7 +146,7 @@ class ExperimentConfiguration(object):
 
     def validate_config(self):
         """Validate the configuration file."""
-        schema = json.load(
+        schema = json.loads(
             read_text("memote.io.schemata", "configuration.json",
                       encoding="utf-8"))
         jsonschema.validate(self.content, schema)

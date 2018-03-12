@@ -15,8 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Modules related to reading and writing files.
-"""
+"""Modules related to reading and writing experimental files."""
 
 from __future__ import absolute_import
+
+from memote.io.configuration import *

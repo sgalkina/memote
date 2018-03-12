@@ -100,6 +100,9 @@ def cli():
 @click.option("--solver", type=click.Choice(["cplex", "glpk", "gurobi"]),
               default="glpk", show_default=True,
               help="Set the solver to be used.")
+@click.option("--experimental", type=click.Path(exists=True, dir_okay=False),
+              default=None, callback=callbacks.validate_experimental,
+              help="Define additional tests using experimental data.")
 @click.option("--custom-tests", type=click.Path(exists=True, file_okay=False),
               multiple=True,
               help="A path to a directory containing custom test "
@@ -109,7 +112,7 @@ def cli():
 @click.argument("model", type=click.Path(exists=True, dir_okay=False),
                 envvar="MEMOTE_MODEL", callback=callbacks.validate_model)
 def run(model, collect, filename, location, ignore_git, pytest_args, exclusive,
-        skip, solver, custom_tests):
+        skip, solver, experimental, custom_tests):
     """
     Run the test suite and collect results.
 

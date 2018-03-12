@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "Memote experiments configuration schema",
-    "description": "The following JSON schema is used to validate a configuration file (typically YAML) that describes one or more experiments to be tested by memote.",
+    "title": "Memote Experimental Tests Configuration Schema",
+    "description": "Validate an experimental data configuration file that defines additional memote tests.",
 
     "definitions": {
         "stringSet": {
@@ -12,12 +12,8 @@
         "experiment": {
             "type": "object",
             "properties": {
-                "type": {
-                    "type": "string",
-                    "enum": ["essentiality", "growth"]
-                },
                 "medium": { "type": "string" },
-                "objectives": { "$ref": "#/definitions/stringSet" },
+                "objective": { "type": "string" },
                 "constraints": { "$ref": "#/definitions/stringSet" },
                 "label": { "type": "string" }
             },
@@ -39,11 +35,40 @@
             "type": "string",
             "enum": ["0.1"]
         },
-        "experiments": {
+        "medium": {
             "type": "object",
-            "additionalProperties": { "$ref": "#/definitions/experiment" }
+            "properties" : {
+                "context": { "type": "string" },
+                "definitions": {
+                    "type": "object",
+                    "additionalProperties": { "$ref": "#/definitions/medium" }
+                }
+            },
+            "additionalProperties": false
+        },
+        "essentiality": {
+            "type": "object",
+            "properties" : {
+                "context": { "type": "string" },
+                "experiments": {
+                    "type": "object",
+                    "additionalProperties": { "$ref": "#/definitions/experiment" }
+                }
+            },
+            "additionalProperties": false
+        },
+        "growth": {
+            "type": "object",
+            "properties" : {
+                "context": { "type": "string" },
+                "experiments": {
+                    "type": "object",
+                    "additionalProperties": { "$ref": "#/definitions/experiment" }
+                }
+            },
+            "additionalProperties": false
         }
     },
-    "required": ["version", "experiments"],
+    "required": ["version"],
     "additionalProperties": false
 }

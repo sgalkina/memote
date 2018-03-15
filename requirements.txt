@@ -10,7 +10,9 @@ pandas>=0.20.1
 Jinja2
 jinja2-ospath
 cookiecutter
-cobra>=0.9.1[sbml]
+cobra>=0.9.1
+python-libsbml
+lxml
 ruamel.yaml<0.15
 travispy
 pygithub
